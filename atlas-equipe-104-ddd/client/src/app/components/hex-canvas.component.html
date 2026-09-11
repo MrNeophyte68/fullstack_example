@@ -1,0 +1,16 @@
+<canvas
+    #surface
+    tabindex="0"
+    aria-label="Carte hexagonale interactive"
+    (pointerdown)="down($event)"
+    (pointermove)="move($event)"
+    (pointerup)="end()"
+    (pointerleave)="leave()"
+    (contextmenu)="$event.preventDefault()"
+    (wheel)="wheel($event)"
+></canvas>
+@if (hover && editor.tool === 'inspect' && !readonly) {
+    <div class="inspector" [style.left.px]="pointerX + 16" [style.top.px]="pointerY + 16">
+        ({{ hover.x }}, {{ hover.y }}) · {{ labels[hover.terrain] }}<br />{{ hover.object ?? 'Aucun objet' }}
+    </div>
+}

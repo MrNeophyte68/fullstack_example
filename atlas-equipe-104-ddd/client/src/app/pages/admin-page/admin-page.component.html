@@ -1,0 +1,37 @@
+<main class="library">
+    <div class="page-heading">
+        <div>
+            <div class="eyebrow">ADMINISTRATION</div>
+            <h1>Comptes utilisateurs</h1>
+        </div>
+        @if (ui.account.api.adminToken) {
+            <button class="danger" (click)="ui.account.resetAll()">Réinitialiser le site</button>
+        }
+    </div>
+    @if (ui.account.api.adminToken) {
+        <table>
+            <thead>
+                <tr>
+                    <th>Utilisateur</th>
+                    <th>Création</th>
+                    <th>Cartes</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (user of ui.account.users(); track user.id) {
+                    <tr>
+                        <td>{{ user.name }}</td>
+                        <td>{{ user.createdAt | date: 'dd/MM/yyyy' }}</td>
+                        <td>{{ user.mapCount }}</td>
+                        <td>
+                            <button (click)="ui.account.changePassword(user)">Mot de passe</button
+                            ><button (click)="ui.account.disconnectUser(user)">Déconnecter</button
+                            ><button class="danger-text" (click)="ui.account.deleteAccount(user)">Supprimer</button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</main>

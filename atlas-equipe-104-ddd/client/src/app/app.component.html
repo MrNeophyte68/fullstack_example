@@ -1,0 +1,9 @@
+<app-header-bar />
+@if (ui.account.api.notice()) {
+    <div class="notice" role="status">{{ ui.account.api.notice() }}<button aria-label="Fermer le message" (click)="ui.account.api.notice.set('')">×</button></div>
+}
+@if (ui.account.error() && !ui.account.modal()) {
+    <div class="error-banner" role="alert">{{ ui.account.error() }}<button (click)="ui.account.error.set('')" aria-label="Fermer l’erreur">×</button></div>
+}
+<router-outlet />
+<app-dialog-host />

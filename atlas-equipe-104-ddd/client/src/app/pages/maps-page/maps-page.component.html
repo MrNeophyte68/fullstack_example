@@ -1,0 +1,60 @@
+<main class="library">
+    <div class="page-heading">
+        <div>
+            <div class="eyebrow">VOTRE ATELIER</div>
+            <h1>Les cartes</h1>
+            <p>Vos créations et les mondes partagés par la communauté.</p>
+        </div>
+        <button class="primary" (click)="ui.edit()">＋ Nouvelle carte</button>
+    </div>
+    <div class="library-toolbar">
+        <div class="tabs">
+            <button [class.active]="ui.filter === 'all'" (click)="ui.filter = 'all'">
+                Toutes les cartes <span>{{ ui.maps().length }}</span></button
+            ><button [class.active]="ui.filter === 'mine'" (click)="ui.filter = 'mine'">Mes créations</button
+            ><button [class.active]="ui.filter === 'public'" (click)="ui.filter = 'public'">Publiques</button>
+        </div>
+        <input aria-label="Rechercher une carte" placeholder="⌕  Rechercher une carte…" [(ngModel)]="ui.search" />
+    </div>
+    <div class="map-grid">
+        @for (map of ui.filteredMaps; track map.id) {
+            <article class="map-card">
+                <div class="map-preview">
+                    <app-hex-canvas [data]="map" [readonly]="true" /><span class="preview-badge">{{
+                        map.visibility === 'public' ? '◇ Publique' : '▣ Privée'
+                    }}</span>
+                </div>
+                <div class="card-content">
+                    <div class="card-title">
+                        <h2>{{ map.name }}</h2>
+                        @if (map.lockedBy) {
+                            <span title="Carte en cours d’édition">🔒</span>
+                        }
+                    </div>
+                    <p>
+                        {{ map.ownerName }} <span>· {{ map.rows }} lignes</span>
+                    </p>
+                    <div class="card-date">Modifiée le {{ map.updatedAt | date: 'dd/MM/yyyy à HH:mm' }}</div>
+                    <div class="card-actions">
+                        <button class="secondary" [disabled]="!!map.lockedBy && map.lockedBy !== ui.account.api.user()?.id" (click)="ui.edit(map)">
+                            {{ map.lockedBy && map.lockedBy !== ui.account.api.user()?.id ? 'En cours d’édition' : 'Ouvrir l’éditeur' }} ↗</button
+                        ><button title="Dupliquer" aria-label="Dupliquer la carte" (click)="ui.duplicate(map)">⧉</button>
+                        @if (map.ownerId === ui.account.api.user()?.id) {
+                            <button title="Changer la visibilité" aria-label="Changer la visibilité" (click)="ui.toggleVisibility(map)">◇</button
+                            ><button title="Supprimer" aria-label="Supprimer la carte" (click)="ui.deleteMap(map)">×</button>
+                        }
+                    </div>
+                </div>
+            </article>
+        } @empty {
+            <div class="empty">
+                <span>⬡</span>
+                <h2>{{ ui.search ? 'Aucune carte trouvée' : 'Votre prochaine aventure commence ici' }}</h2>
+                <p>{{ ui.search ? 'Essayez un autre nom.' : 'Créez une carte, puis donnez vie à chaque tuile.' }}</p>
+                @if (!ui.search) {
+                    <button class="primary" (click)="ui.edit()">Créer une carte</button>
+                }
+            </div>
+        }
+    </div>
+</main>

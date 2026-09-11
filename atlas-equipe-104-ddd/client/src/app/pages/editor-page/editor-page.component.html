@@ -1,0 +1,99 @@
+<main class="workspace">
+    <aside class="panel tools-panel">
+        <div class="panel-heading">TERRAINS <span>01</span></div>
+        <div class="terrain-buttons">
+            @for (terrain of ui.terrainOptions; track terrain.value) {
+                <button [class.selected]="ui.editor.terrain === terrain.value" (click)="ui.editor.terrain = terrain.value">
+                    <span class="terrain-icon" [style.background]="ui.colors[terrain.value]">{{ terrain.symbol }}</span
+                    >{{ terrain.label }}<kbd>{{ terrain.key }}</kbd>
+                </button>
+            }
+        </div>
+        <div class="panel-heading">OUTILS <span>02</span></div>
+        <div class="tool-grid">
+            @for (tool of ui.toolOptions.slice(0, 3); track tool.value) {
+                <button [class.selected]="ui.editor.tool === tool.value" (click)="ui.editor.tool = tool.value">
+                    <span>{{ tool.symbol }}</span
+                    >{{ tool.label }}<kbd>{{ tool.key }}</kbd>
+                </button>
+            }
+        </div>
+        <label class="range-label"
+            >Rayon du pinceau <strong>{{ ui.editor.radius }}</strong
+            ><input type="range" min="1" max="4" step="1" [(ngModel)]="ui.editor.radius"
+        /></label>
+        <div class="panel-heading">OBJETS <span>03</span></div>
+        <div class="tool-grid">
+            @for (tool of ui.toolOptions.slice(3); track tool.value) {
+                <button [class.selected]="ui.editor.tool === tool.value" (click)="ui.editor.tool = tool.value">
+                    <span>{{ tool.symbol }}</span
+                    >{{ tool.label }}<kbd>{{ tool.key }}</kbd>
+                </button>
+            }
+        </div>
+        <div class="tool-help">
+            <p><kbd>Shift</kbd> + seau : bordure</p>
+            <p><kbd>Shift</kbd> + route : ligne</p>
+            <p><kbd>Shift</kbd> + clic droit : effacer</p>
+            <p>Clic droit glissé : déplacer</p>
+            <p>Molette / <kbd>＋</kbd> <kbd>−</kbd> : zoom</p>
+        </div>
+        <button class="back-button" (click)="ui.exitEditor()">← Retour aux cartes</button>
+    </aside>
+    <section class="canvas-area">
+        <app-hex-canvas (warning)="ui.account.api.notice.set($event)" />
+        <div class="canvas-toolbar">
+            <button aria-label="Zoom arrière" (click)="ui.canvas?.zoomAt(1 / 1.15)">−</button><button (click)="ui.canvas?.fit()">Centrer</button
+            ><button aria-label="Zoom avant" (click)="ui.canvas?.zoomAt(1.15)">＋</button>
+        </div>
+        <div class="canvas-caption">{{ ui.editor.map().rows }} LIGNES <span>·</span> {{ ui.editor.map().tiles.length }} TUILES</div>
+    </section>
+    <aside class="panel details-panel">
+        <div class="panel-heading">LA CARTE <span>04</span></div>
+        <div class="history-buttons">
+            <button [disabled]="!ui.editor.undoStack.length || ui.editor.busy()" (click)="ui.editor.undo()">↶ Annuler <kbd>⌃Z</kbd></button
+            ><button [disabled]="!ui.editor.redoStack.length || ui.editor.busy()" (click)="ui.editor.redo()">↷ Refaire <kbd>⌃Y</kbd></button>
+        </div>
+        <label class="range-label"
+            >Taille de la carte <strong>{{ ui.editor.map().rows }} lignes</strong
+            ><input
+                type="range"
+                min="15"
+                max="45"
+                step="2"
+                [ngModel]="ui.editor.map().rows"
+                (pointerdown)="ui.editor.begin(); ui.canvas?.fit()"
+                (ngModelChange)="ui.editor.resize(+$event)"
+                (change)="ui.editor.end()"
+                (pointerup)="ui.editor.end()"
+            /><span class="range-ends"><span>15</span><span>45</span></span></label
+        >
+        <div class="panel-heading">INVENTAIRE</div>
+        <div class="inventory">
+            @for (terrain of ui.terrainOptions; track terrain.value) {
+                <div>
+                    <span><i [style.background]="ui.colors[terrain.value]"></i>{{ terrain.label }}</span
+                    ><strong>{{ ui.count(terrain.value) }}</strong>
+                </div>
+            }
+            <hr />
+            @for (tool of ui.toolOptions.slice(3); track tool.value) {
+                <div>
+                    <span>{{ tool.symbol }} &nbsp;{{ tool.label }}</span
+                    ><strong>{{ ui.count(tool.value) }}{{ tool.value === 'spawn' ? ' / 4' : '' }}</strong>
+                </div>
+            }
+        </div>
+        <div class="editor-actions">
+            <button class="primary" [disabled]="ui.account.loading()" (click)="ui.save()">↓ Enregistrer</button>
+            @if (ui.navigation.hostedId) {
+                <button class="secondary" (click)="ui.sessions.resume()">▷ Rejoindre la session</button
+                ><button class="quiet" (click)="ui.sessions.closeTest()">Fermer la session</button>
+            } @else {
+                <button class="secondary" (click)="ui.sessions.startTest()">▷ Tester la carte</button>
+            }
+            <button class="quiet" (click)="ui.canvas?.export()">Exporter en PNG ↗</button
+            ><button class="quiet danger-text" (click)="ui.reset()">Réinitialiser la carte</button>
+        </div>
+    </aside>
+</main>

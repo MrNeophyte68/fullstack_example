@@ -1,0 +1,97 @@
+@if (ui.account.api.session(); as session) {
+    <main class="workspace">
+        <aside class="panel">
+            <div class="panel-heading">DÉPLACEMENT</div>
+            <div class="trip-duration">
+                <span>Durée du trajet</span><strong>{{ ui.sessions.travelDuration | number: '1.1-1' }} <small>s</small></strong>
+            </div>
+            <div class="panel-heading">CONFIGURATION</div>
+            <label class="range-label"
+                >Temps de base <strong>{{ session.config.base }} ms</strong
+                ><input
+                    type="range"
+                    min="100"
+                    max="2000"
+                    step="10"
+                    [disabled]="!ui.sessions.isHost"
+                    [(ngModel)]="session.config.base"
+                    (change)="ui.sessions.configure()"
+            /></label>
+            @for (option of ui.multipliers; track option.value) {
+                <label class="config-input"
+                    >{{ option.label
+                    }}<input
+                        type="number"
+                        min="0.1"
+                        max="5"
+                        step="0.01"
+                        [disabled]="!ui.sessions.isHost"
+                        [(ngModel)]="session.config[option.value]"
+                        (change)="ui.sessions.configure()"
+                /></label>
+            }
+            <p class="muted small">
+                {{ ui.sessions.isHost ? 'Les changements s’appliquent au prochain centre de tuile.' : 'Seul l’hôte peut modifier ces valeurs.' }}
+            </p>
+            <div class="tool-help">
+                <p>Cliquez une tuile pour vous déplacer.</p>
+                <p><kbd>Q</kbd> Arrêter à la prochaine tuile</p>
+                <p><kbd>T</kbd> Écrire un message</p>
+            </div>
+            <button class="back-button" (click)="ui.sessions.leaveTest()">← {{ ui.sessions.isHost ? 'Retour à l’éditeur' : 'Quitter la session' }}</button>
+        </aside>
+        <section class="canvas-area">
+            <app-hex-canvas
+                [data]="session.map"
+                [readonly]="true"
+                [players]="session.players"
+                [path]="ui.sessions.preview"
+                (tileHover)="ui.sessions.onHover($event)"
+                (tileClick)="ui.sessions.move($event)"
+            />
+            <div class="canvas-toolbar">
+                <button (click)="ui.canvas?.zoomAt(1 / 1.15)" aria-label="Zoom arrière">−</button><button (click)="ui.canvas?.fit()">Centrer</button
+                ><button (click)="ui.canvas?.zoomAt(1.15)" aria-label="Zoom avant">＋</button>
+            </div>
+        </section>
+        <aside class="panel chat-panel">
+            <div class="panel-heading">
+                EXPLORATEURS <span>{{ session.players.length }} / 4</span>
+            </div>
+            <div class="players">
+                @for (player of session.players; track player.id) {
+                    <div>
+                        <i [style.background]="player.color"></i>{{ player.name }}
+                        @if (player.id === session.hostId) {
+                            <span class="badge">HÔTE</span>
+                        }
+                    </div>
+                }
+            </div>
+            <div class="panel-heading">CLAVARDAGE</div>
+            <div class="chat-messages" aria-live="polite">
+                @for (message of session.messages; track $index) {
+                    <div [class.system-message]="message.system">
+                        <span class="chat-meta">{{ message.time | date: 'HH:mm' }} · {{ message.name }}</span>
+                        <p>{{ message.text }}</p>
+                    </div>
+                }
+            </div>
+            <form (ngSubmit)="ui.sessions.sendChat()">
+                <textarea
+                    id="chat-input"
+                    aria-label="Message"
+                    maxlength="200"
+                    placeholder="T pour écrire…"
+                    [(ngModel)]="ui.sessions.chat"
+                    name="chat"
+                    (focus)="ui.sessions.chatActive = true"
+                    (keydown.enter)="$event.preventDefault(); ui.sessions.sendChat()"
+                ></textarea>
+                <div class="chat-footer">
+                    <span>{{ ui.sessions.chat.length }} / 200</span><button type="submit" [disabled]="!ui.sessions.chat.trim()">Envoyer ↗</button>
+                </div>
+            </form>
+        </aside>
+    </main>
+}

@@ -1,0 +1,28 @@
+@if (ui.account.modal(); as dialog) {
+    <div class="modal-backdrop" (click)="ui.account.closeModal()">
+        <section
+            cdkTrapFocus
+            [cdkTrapFocusAutoCapture]="true"
+            class="modal"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="dialog-title"
+            (click)="$event.stopPropagation()"
+        >
+            <button class="modal-close" (click)="ui.account.closeModal()" aria-label="Fermer">×</button>
+            <div class="eyebrow">ATLAS HEX STUDIO</div>
+            <h2 id="dialog-title">{{ dialog.title }}</h2>
+            @if (dialog.text) {
+                <p class="modal-description">{{ dialog.text }}</p>
+            }
+            @if (ui.account.error()) {
+                <div class="form-error" role="alert">{{ ui.account.error() }}</div>
+            }
+            @if (['login', 'register', 'admin-login', 'profile', 'password'].includes(dialog.type)) {
+                <app-account-dialog />
+            } @else {
+                <app-map-dialog />
+            }
+        </section>
+    </div>
+}

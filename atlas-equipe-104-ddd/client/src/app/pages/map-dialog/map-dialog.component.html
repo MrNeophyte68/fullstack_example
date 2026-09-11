@@ -1,0 +1,63 @@
+@if (ui.account.modal(); as dialog) {
+    @switch (dialog.type) {
+        @case ('save') {
+            <ng-container *ngTemplateOutlet="mapForm" />
+        }
+        @case ('duplicate') {
+            <ng-container *ngTemplateOutlet="mapForm" />
+        }
+        @case ('test') {
+            <form (ngSubmit)="ui.account.submitModal()">
+                <label
+                    >Type de session<select name="type" [(ngModel)]="ui.sessions.sessionType">
+                        <option value="solo">Solo — uniquement vous</option>
+                        <option value="public">Publique — ouverte à tous</option>
+                        <option value="protected">Protégée — NIP requis</option>
+                    </select></label
+                >
+                @if (ui.sessions.sessionType === 'protected') {
+                    <label
+                        >NIP à quatre chiffres<input
+                            name="pin"
+                            [(ngModel)]="ui.sessions.pin"
+                            pattern="[0-9]{4}"
+                            maxlength="4"
+                            inputmode="numeric"
+                            type="password"
+                            required
+                    /></label>
+                }
+                <button class="primary full" [disabled]="ui.account.loading()">Démarrer la session →</button>
+            </form>
+        }
+        @case ('pin') {
+            <form (ngSubmit)="ui.account.submitModal()">
+                <label
+                    >NIP<input name="pin" [(ngModel)]="ui.sessions.pin" pattern="[0-9]{4}" maxlength="4" inputmode="numeric" type="password" required /></label
+                ><button class="primary full" [disabled]="ui.account.loading()">Joindre la session</button>
+            </form>
+        }
+        @case ('confirm') {
+            <div class="modal-actions">
+                <button class="secondary" (click)="ui.account.closeModal()">Annuler</button
+                ><button class="danger" [disabled]="ui.account.loading()" (click)="ui.account.submitModal()">Confirmer</button>
+            </div>
+        }
+        @default {
+            <button class="secondary full" (click)="ui.account.closeModal()">Retour à l’éditeur</button>
+        }
+    }
+}
+<ng-template #mapForm
+    ><form (ngSubmit)="ui.account.submitModal()">
+        <label>Nom de la carte<input name="mapName" [(ngModel)]="ui.mapName" required maxlength="60" placeholder="Ex. Les îles du nord" /></label
+        ><label
+            >Visibilité<select name="visibility" [(ngModel)]="ui.visibility">
+                <option value="private">Privée — uniquement vous</option>
+                <option value="public">Publique — visible et modifiable par tous</option>
+            </select></label
+        ><button class="primary full" [disabled]="ui.account.loading()">
+            {{ ui.account.modal()?.type === 'duplicate' ? 'Créer la copie' : 'Enregistrer la carte' }}
+        </button>
+    </form></ng-template
+>

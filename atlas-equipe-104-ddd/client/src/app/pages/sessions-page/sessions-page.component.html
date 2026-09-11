@@ -1,0 +1,38 @@
+<main class="library">
+    <div class="page-heading">
+        <div>
+            <div class="eyebrow">EXPLORER ENSEMBLE</div>
+            <h1>Sessions de test</h1>
+            <p>Rejoignez une carte et explorez-la avec jusqu’à trois autres personnes.</p>
+        </div>
+        <span class="live-label">● EN DIRECT</span>
+    </div>
+    <div class="map-grid">
+        @for (session of ui.account.api.sessions(); track session.id) {
+            <article class="map-card">
+                <div class="map-preview">
+                    <app-hex-canvas [data]="session.map" [readonly]="true" /><span class="preview-badge">{{
+                        session.type === 'protected' ? '▣ Protégée' : '◇ Publique'
+                    }}</span>
+                </div>
+                <div class="card-content">
+                    <h2>{{ session.mapName }}</h2>
+                    <p>Hôte : {{ session.hostName }}</p>
+                    <div class="session-bottom">
+                        <span>{{ session.players.length }} / 4 explorateurs</span
+                        ><button class="primary" [disabled]="session.players.length >= 4 || !ui.account.api.connected()" (click)="ui.sessions.join(session)">
+                            {{ session.players.length >= 4 ? 'Complète' : 'Joindre →' }}
+                        </button>
+                    </div>
+                </div>
+            </article>
+        } @empty {
+            <div class="empty">
+                <span>◎</span>
+                <h2>Aucune session en cours</h2>
+                <p>Ouvrez une carte dans l’éditeur pour lancer une session de test.</p>
+                <button class="secondary" routerLink="/maps">Voir les cartes →</button>
+            </div>
+        }
+    </div>
+</main>

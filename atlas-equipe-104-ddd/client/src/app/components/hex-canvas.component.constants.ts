@@ -1,0 +1,17 @@
+export const HEX_SQUARE_FACTOR = 3;
+export const ROW_HEIGHT_FACTOR = 1.5;
+export const MAP_BORDER_TOTAL = 24;
+export const HALF_COLUMN = 0.5;
+export const HEX_SIDES = 6;
+export const CORNER_ANGLE = 60;
+export const POINTY_TOP_ANGLE = 90;
+export const HALF_TURN_DEGREES = 180;
+export const MIN_GRID_STROKE = 0.7;
+export const GRID_STROKE_RATIO = 0.045;
+export const ROAD_WIDTH_RATIO = 0.2;
+export const ROAD_NODE_RATIO = 0.16;
+export const OBJECT_GLYPH_RATIO = 1.05;
+export const PLAYER_OFFSET_RATIO = 0.3;
+export const PLAYER_RADIUS_RATIO = 0.26;
+export const ZOOM_STEP = 1.15;
+export const MIN_VISIBLE_ROWS = 8;

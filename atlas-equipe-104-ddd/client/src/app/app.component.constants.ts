@@ -1,0 +1,2 @@
+export const COUNTDOWN_INTERVAL_MS = 100;
+export const MILLISECONDS_PER_SECOND = 1000;

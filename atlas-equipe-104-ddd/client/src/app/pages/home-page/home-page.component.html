@@ -1,0 +1,19 @@
+<main class="home">
+    <div class="home-grid" aria-hidden="true">⬡</div>
+    <div class="eyebrow">ATELIER DE CARTOGRAPHIE</div>
+    <h1>Un monde à créer.<br /><span>Une tuile à la fois.</span></h1>
+    <p>Dessinez vos terrains, reliez vos villes et explorez vos cartes ensemble.</p>
+    <div class="home-actions">
+        <button class="primary" routerLink="/maps">Gestion des cartes <span>↗</span></button
+        ><button class="secondary" routerLink="/sessions">Sessions de test <span>→</span></button>
+    </div>
+    <div class="terrain-strip">
+        @for (terrain of ui.terrainOptions; track terrain.value) {
+            <span><i [style.background]="ui.colors[terrain.value]"></i>{{ terrain.label }}</span>
+        }
+    </div>
+    <footer>
+        LOG2995 · Automne 2026
+        <span>Équipe 104 · Akhan Mehmet Sozen, Fadi Mousa, Majid Khauly, Talat Fallouh, Ismail Bissoular, Jazia Benhadjeba</span>
+    </footer>
+</main>

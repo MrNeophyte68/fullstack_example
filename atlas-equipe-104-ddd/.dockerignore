@@ -1,0 +1,9 @@
+**/node_modules
+**/out
+**/out-tsc
+**/dist
+**/coverage
+**/.angular
+**/.env
+.git
+work

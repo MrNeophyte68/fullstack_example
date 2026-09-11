@@ -1,0 +1,43 @@
+<header class="topbar">
+    <button
+        class="brand"
+        routerLink="/home"
+    >
+        <span class="brand-mark">⬡</span> ATLAS<span class="brand-sub">HEX STUDIO</span>
+    </button>
+    @if (ui.view() !== 'editor' && ui.view() !== 'test') {
+        <nav>
+            <button routerLinkActive="active" routerLink="/maps">Mes cartes</button
+            ><button routerLinkActive="active" routerLink="/sessions">Sessions de test</button>
+        </nav>
+    }
+    @if (ui.view() === 'editor') {
+        <div class="document-title">
+            {{ ui.editor.name }} <span class="small muted">{{ ui.editor.dirty ? '• Modifications non enregistrées' : 'Enregistrée' }}</span>
+        </div>
+    }
+    @if (ui.view() === 'test') {
+        <div class="document-title">{{ ui.account.api.session()?.mapName }} <span class="badge">MODE TEST</span></div>
+    }
+    <div class="account">
+        <span
+            class="connection"
+            [class.online]="ui.account.api.connected()"
+            [title]="ui.account.api.connected() ? 'Connecté au serveur' : 'Serveur déconnecté'"
+        ></span>
+        @if (ui.account.api.user(); as user) {
+            <button (click)="ui.account.profileMenu = !ui.account.profileMenu" class="account-button">
+                <span class="avatar">{{ user.name.charAt(0).toUpperCase() }}</span
+                >{{ user.name }} ⌄
+            </button>
+            @if (ui.account.profileMenu) {
+                <div class="dropdown">
+                    <button (click)="ui.account.profile()">Profil</button><button (click)="ui.account.run(ui.account.api.logout.bind(ui.account.api))">Déconnexion</button>
+                </div>
+            }
+        } @else {
+            <button class="quiet" (click)="ui.account.open('login', 'Se connecter')">Se connecter</button
+            ><button class="primary small-button" (click)="ui.account.open('register', 'Créer un compte')">Créer un compte</button>
+        }
+    </div>
+</header>

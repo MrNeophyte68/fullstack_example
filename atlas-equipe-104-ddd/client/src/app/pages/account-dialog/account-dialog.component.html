@@ -1,0 +1,84 @@
+@if (ui.account.modal(); as dialog) {
+    @switch (dialog.type) {
+        @case ('login') {
+            <ng-container *ngTemplateOutlet="authForm" />
+        }
+        @case ('register') {
+            <ng-container *ngTemplateOutlet="authForm" />
+        }
+        @case ('admin-login') {
+            <form (ngSubmit)="ui.account.adminLogin()">
+                <label
+                    >Mot de passe administrateur<input
+                        type="password"
+                        name="password"
+                        [(ngModel)]="ui.account.password"
+                        required
+                        autocomplete="current-password" /></label
+                ><button class="primary full" [disabled]="ui.account.loading()">Accéder à l’administration</button>
+            </form>
+        }
+        @case ('profile') {
+            <div class="profile-summary">
+                <span class="avatar">{{ ui.account.api.user()?.name?.charAt(0) }}</span>
+                <h3>{{ ui.account.api.user()?.name }}</h3>
+                <p>Compte créé le {{ ui.account.api.user()?.createdAt | date: 'dd/MM/yyyy' }}</p>
+                <p>{{ ui.account.api.user()?.mapCount }} carte(s)</p>
+            </div>
+            <button class="secondary full" (click)="ui.account.changePassword()">Changer le mot de passe</button
+            ><button class="quiet full danger-text" (click)="ui.account.deleteAccount()">Supprimer mon compte</button>
+        }
+        @case ('password') {
+            <form (ngSubmit)="ui.account.submitModal()">
+                <label
+                    >Nouveau mot de passe<input
+                        type="password"
+                        name="password"
+                        [(ngModel)]="ui.account.password"
+                        minlength="10"
+                        maxlength="128"
+                        required
+                        autocomplete="new-password"
+                /></label>
+                <p class="small muted">10 caractères minimum, une lettre et un chiffre.</p>
+                <label
+                    >Confirmer le mot de passe<input
+                        type="password"
+                        name="confirm"
+                        [(ngModel)]="ui.account.confirmPassword"
+                        required
+                        autocomplete="new-password" /></label
+                ><button class="primary full" [disabled]="ui.account.loading()">Enregistrer</button>
+            </form>
+        }
+    }
+}
+<ng-template #authForm
+    ><form (ngSubmit)="ui.account.authenticate()">
+        <label>Nom d’utilisateur<input name="name" [(ngModel)]="ui.account.name" required minlength="3" maxlength="24" autocomplete="username" /></label
+        ><label
+            >Mot de passe<input
+                name="password"
+                type="password"
+                [(ngModel)]="ui.account.password"
+                required
+                maxlength="128"
+                [autocomplete]="ui.account.modal()?.type === 'register' ? 'new-password' : 'current-password'"
+        /></label>
+        @if (ui.account.modal()?.type === 'register') {
+            <p class="small muted">10 caractères minimum, une lettre et un chiffre.</p>
+            <label
+                >Confirmer le mot de passe<input name="confirm" type="password" [(ngModel)]="ui.account.confirmPassword" required autocomplete="new-password"
+            /></label>
+        }
+        <button class="primary full" [disabled]="ui.account.loading()">
+            {{ ui.account.loading() ? 'Veuillez patienter…' : ui.account.modal()?.type === 'register' ? 'Créer mon compte' : 'Se connecter →' }}</button
+        ><button
+            type="button"
+            class="quiet full"
+            (click)="ui.account.open(ui.account.modal()?.type === 'login' ? 'register' : 'login', ui.account.modal()?.type === 'login' ? 'Créer un compte' : 'Se connecter')"
+        >
+            {{ ui.account.modal()?.type === 'login' ? 'Pas encore de compte ? Créer un compte' : 'Déjà un compte ? Se connecter' }}
+        </button>
+    </form></ng-template
+>

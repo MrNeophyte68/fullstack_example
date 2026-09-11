@@ -1,0 +1,1 @@
+export const SESSION_RESTORE_TIMEOUT_MS = 5000;
